@@ -1,0 +1,2 @@
+1. laravel new project
+2. Change the appserviceprovider to what matches in this folder
