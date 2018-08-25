@@ -21,13 +21,16 @@ class Post extends Model
     		$post->message = $message;
     	$post->save();
 
-    	foreach ($images as $key => $image)
-    	{
-    		$img = new Image;
-    			$img->path = $image;
-    			$img->post_id = $post->id;
-    		$img->save();
-    	}
+        if($images != null)
+        {
+            foreach ($images as $key => $image)
+            {
+                $img = new Image;
+                    $img->path = $image;
+                    $img->post_id = $post->id;
+                $img->save();
+            }
+        }
 
     	return $post;
     }
