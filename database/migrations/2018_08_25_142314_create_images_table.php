@@ -14,8 +14,9 @@ class CreateImagesTable extends Migration
     public function up()
     {
         Schema::enableForeignKeyConstraints();
-        
+
         Schema::create('images', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
             $table->increments('id');
             $table->string('path', 500);
             $table->unsignedInteger('post_id')->nullable();
