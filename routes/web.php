@@ -40,3 +40,9 @@ Route::get('/location', function()
 {
 	return view('location');
 });
+
+// Route::post('/upload_image', 'ImageController@upload');
+
+Route::get('php_info', function(){
+	phpInfo();
+});
