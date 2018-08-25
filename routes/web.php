@@ -41,7 +41,7 @@ Route::get('/location', function()
 	return view('location');
 });
 
-// Route::post('/upload_image', 'ImageController@upload');
+Route::post('/upload_post', 'PostController@upload');
 
 Route::get('php_info', function(){
 	phpInfo();

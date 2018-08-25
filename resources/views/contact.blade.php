@@ -14,15 +14,10 @@
 	<div style="text-align: center; display: block; position: absolute; margin-top: 1%; width: 55%;">
 		<u><h2>Contact Us Directly</h2></u>
 	</div>
-	<div style="text-align: center; display: block; position: absolute; margin-top: 7%; left: 30%;">
+	<div style="text-align: center; display: block; position: absolute; margin-top: 7%; left: 19%;">
 		<strong><h4>Clayton Spinney II</h4></strong>
 		E-mail: <a href="mailto:clayton.spinney@yahoo.com">clayton.spinney@yahoo.com</a><br>
 		Phone: (207)-841-9731<br>
-	</div>
-	<div style="text-align: center; display: block; position: absolute; margin-top: 7%; left: 10%">
-		<strong><h4>Melissa Spinney</h4></strong>
-		E-mail: <a href="mailto:lsrawson@yahoo.com">lsrawson@yahoo.com</a><br>
-		Phone: (207)-512-0878<br>
 	</div>
 	<div style="text-align: center; display: block; position: absolute; margin-top: 18%; width: 55%;">
 		<u><h2>Mailing Address</h2></u>
