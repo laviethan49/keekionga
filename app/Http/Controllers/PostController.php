@@ -11,8 +11,8 @@ class PostController extends Controller
     {
     	//Validates Post Message
     	$validatedData = $req->validate([
-	        'post_title' => 'required',
-	        'post_message' => 'required',
+	        'post_title' => 'required|max:500',
+	        'post_message' => 'required|max:5000',
 	    ]);
     	//Check Images
     	foreach ($req->file as $key => $value)
@@ -27,11 +27,27 @@ class PostController extends Controller
     	{
     		$randomString = rand(0, 1000000000000000000);
     		$value->storeAs('public/images', $randomString.'.jpeg');
-    		$imagePaths[$key] = 'public/images/'.$randomString.'.jpeg';
+    		$imagePaths[$key] = '/storage/images/'.$randomString.'.jpeg';
     	}
     	//Everything is set
     	$newPost = Post::newPost($req->post_title, $req->post_message, $imagePaths);
 
     	return back()->withErrors(['Post Successfully Created!']);
+    }
+
+    public function getAllPosts()
+    {
+    	$allPosts = Post::orderBy('created_at', 'desc')->get();
+    	$postsWithImages = array();
+
+    	foreach ($allPosts as $key => $post)
+    	{
+    		$postsWithImages[$key] = [
+    			"post" => $post,
+    			"images" => $post->images
+    		];
+    	}
+
+    	return response()->json($postsWithImages);
     }
 }

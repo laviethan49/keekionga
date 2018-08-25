@@ -11,7 +11,7 @@ class Post extends Model
 
     public function images()
     {
-    	return $this->hasMany('App\Image');
+    	return $this->hasMany('App\Image', 'post_id');
     }
 //====================================================================================================
     public static function newPost($title, $message, $images)
