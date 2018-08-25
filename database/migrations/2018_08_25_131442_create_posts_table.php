@@ -18,7 +18,7 @@ class CreatePostsTable extends Migration
             $table->increments('id');
             $table->string('title', 500);
             $table->string('message', 5000);
-            $table->tinyInteger('special');
+            $table->tinyInteger('special')->default(0);
             $table->timestamps();
         });
     }
