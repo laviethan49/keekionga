@@ -174,7 +174,7 @@
 .post_image:hover {
 	transform: scale(3);
 	overflow-y: visible;
-	padding-bottom: 0px;
+	padding-bottom: 1%;
 	padding-left: 1%;
 }
 

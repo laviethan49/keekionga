@@ -13,6 +13,7 @@ class PostController extends Controller
     	$validatedData = $req->validate([
 	        'post_title' => 'required|max:500',
 	        'post_message' => 'required|max:5000',
+            'file[]' => 'required',
 	    ]);
     	//Check Images
     	foreach ($req->file as $key => $value)
