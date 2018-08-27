@@ -114,6 +114,15 @@ class PostController extends Controller
     {
         $id = $req->postID;
 
+        $delete = Post::find($id)->images()->get();
+
+        foreach ($delete as $key => $value)
+        {
+            $path = $value->path;
+            $fileName = str_replace('/storage', '/public', $path);
+            Storage::delete($fileName);
+        }
+
         Post::find($id)->delete();
 
         return back()->withErrors(['Post Successfully Deleted!']);
