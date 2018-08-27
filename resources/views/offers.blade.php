@@ -190,6 +190,8 @@
 				$(stipulation).attr('class', 'centered');
 				$(stipulation).html('*There may be a negotiable price for shipping, please contact us for more info');
 
+			// var emailList
+
 			$(container).append(product_containers);
 			$(container).append(stipulation);
 		}

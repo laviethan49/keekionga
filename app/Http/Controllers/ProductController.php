@@ -76,4 +76,9 @@ class ProductController extends Controller
 
     	return back()->withErrors(['Product Successfully Deleted!']);
     }
+
+    public function sendEmailForInquiry(Request $req)
+    {
+    	dd($req->all());
+    }
 }

@@ -41,6 +41,6 @@ Route::get('/location', function()
 	return view('location');
 });
 
-Route::get('php_info', function(){
-	phpInfo();
-});
+// Route::get('php_info', function(){
+// 	phpInfo();
+// });

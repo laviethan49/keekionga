@@ -376,3 +376,16 @@ body {
 	margin-left: 4%;
 	margin-top: 2%;
 }
+
+#philosophy_container {
+	display: block;
+	position: relative;
+	left: 10%;
+	width: 80%;
+	background-color: white;
+	border: solid #a3c3f7 1px;
+ 	box-shadow: 10px 10px 10px 0px #051e47;
+	border-radius: 3px;
+	padding-bottom: 10px;
+	font-size: 16px;
+}
