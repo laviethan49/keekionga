@@ -9,7 +9,7 @@ use App\Image;
 
 class PostController extends Controller
 {
-    public function upload(Request $req)
+    public function createPost(Request $req)
     {
     	//Validates Post Message
     	$validatedData = $req->validate([

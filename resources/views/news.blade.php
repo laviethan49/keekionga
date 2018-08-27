@@ -13,7 +13,7 @@
 			@if($errors->any())
 				<h2><p class="error_message">{{$errors->first()}}</p></h2>
 			@endif
-			<form id="post_form" action="{{ URL::to('upload_post') }}" method="post" enctype="multipart/form-data">
+			<form id="post_form" action="{{ URL('api/posts/new') }}" method="post" enctype="multipart/form-data">
 				<h3 class="centered">Create A New Post</h3>
 				<input class="input_text_box form-control" type="text" name="post_title" placeholder="Title Your Post" value="{{ old('post_title') }}">
 				<textarea class="input_text_box form-control" type="text" name="post_message" placeholder="Post Message Here">{{ old('post_message') }}</textarea>

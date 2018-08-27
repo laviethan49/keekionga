@@ -18,6 +18,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::prefix('posts')->group(function(){
+	Route::post('/new', 'PostController@createPost');
 	Route::get('/all', 'PostController@getAllPosts');
 	Route::post('/edit/{postID}', 'PostController@editPost');
 	Route::post('/delete/{postID}', 'PostController@deletePost');
