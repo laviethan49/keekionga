@@ -34,19 +34,29 @@ class PostController extends Controller
                 $imagePaths[$key] = '/storage/images/'.$randomString.'.jpeg';
             }
         }
-        else
+
+        $post = new Post;
+            $post->title = $req->post_title;
+            $post->message = $req->post_message;
+        $post->save();
+
+        if(isset($req->file))
         {
-            $imagePaths = null;
+            foreach ($imagePaths as $key => $image)
+            {
+                $img = new Image;
+                    $img->path = $image;
+                    $img->post_id = $post->id;
+                $img->save();
+            }
         }
-    	//Everything is set
-    	$newPost = Post::newPost($req->post_title, $req->post_message, $imagePaths);
 
     	return back()->withErrors(['Post Successfully Created!']);
     }
 
-    public function getAllPosts()
+    public function getTenPosts()
     {
-    	$allPosts = Post::orderBy('created_at', 'desc')->get();
+    	$allPosts = Post::orderBy('created_at', 'desc')->take(10)->get();
     	$postsWithImages = array();
 
     	foreach ($allPosts as $key => $post)
@@ -58,6 +68,22 @@ class PostController extends Controller
     	}
 
     	return response()->json($postsWithImages);
+    }
+
+    public function getAllPosts()
+    {
+        $allPosts = Post::orderBy('created_at', 'desc')->get();
+        $postsWithImages = array();
+
+        foreach ($allPosts as $key => $post)
+        {
+            $postsWithImages[$key] = [
+                "post" => $post,
+                "images" => $post->images
+            ];
+        }
+
+        return response()->json($postsWithImages);
     }
 
     public function editPost(Request $req)

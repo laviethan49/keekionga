@@ -13,25 +13,4 @@ class Post extends Model
     {
     	return $this->hasMany('App\Image', 'post_id');
     }
-//====================================================================================================
-    public static function newPost($title, $message, $images)
-    {
-    	$post = new Post;
-    		$post->title = $title;
-    		$post->message = $message;
-    	$post->save();
-
-        if($images != null)
-        {
-            foreach ($images as $key => $image)
-            {
-                $img = new Image;
-                    $img->path = $image;
-                    $img->post_id = $post->id;
-                $img->save();
-            }
-        }
-
-    	return $post;
-    }
 }

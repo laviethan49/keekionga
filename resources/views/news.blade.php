@@ -23,21 +23,19 @@
 					</p>
 					<input type="file" name="file[]" id="file" multiple="multiple">
 					<br>
-					{{-- <input type="button" name="add_image" onclick="addImageUpload()" value="Add Another Image"> --}}
-					{{-- <input type="button" name="remove_image" onclick="removeImageUpload()" value="Remove Last Image"> --}}
 				</div>
-				<input class="submit_button" type="submit" name="submit" value="Post">
+				<input class="submit_button btn btn-primary" type="submit" name="submit" value="Post">
 				<input type="hidden" value="{{ csrf_token() }}" name="_token">
 			</form>
 		</div>
 		<div id="posts_container_admin">
-			<div class="loading_icon">
+			<div id="loading_icon">
 				<img src="{{ URL('/storage/loading/cloading.gif') }}" />
 			</div>
 		</div>
 	@else
 		<div id="posts_container">
-			<div class="loading_icon">
+			<div id="loading_icon">
 				<img src="{{ URL('/storage/loading/cloading.gif') }}" />
 			</div>
 		</div>
@@ -68,7 +66,7 @@
 		$(document).ready(function()
 		{
 		    $.ajax({
-		        url: "{{ URL('/api/posts/all') }}",
+		        url: "{{ URL('/api/posts/ten') }}",
 		        type: "GET",
 		        cache: false,
 		        success: function(data)
@@ -139,12 +137,12 @@
 						images[lock] = image;
 					});
 				var edit_button = document.createElement("button");
-					$(edit_button).attr('class', 'btn-warning edit_post');
+					$(edit_button).attr('class', 'btn btn-warning edit_post');
 					$(edit_button).attr('id', 'edit_post_'+item['post'].id);
 					$(edit_button).attr('onclick', 'editPost('+item['post'].id+')');
 					$(edit_button).html('Edit Post');
 				var delete_button = document.createElement("button");
-					$(delete_button).attr('class', 'btn-danger delete_post');
+					$(delete_button).attr('class', 'btn btn-danger delete_post');
 					$(delete_button).attr('onclick', 'deletePost('+item['post'].id+')');
 					$(delete_button).html('Delete Post');
 				$(image_container).append(images);
@@ -207,7 +205,7 @@
 				$(select_delete_files).html(selectables);
 
 			var submit_edit_button = document.createElement("button");
-				$(submit_edit_button).attr('class', 'btn-primary submit_button');
+				$(submit_edit_button).attr('class', 'btn btn-primary submit_button');
 				$(submit_edit_button).attr('type', 'submit');
 				$(submit_edit_button).html('Submit Your Changes');
 
@@ -259,5 +257,9 @@
 				document.getElementById('post_terminated_file_'+id).remove();
 			}
 		}
+		// function addSortOption(data)
+		// {
+		// 	data.forEach()
+		// }
 	</script>
 @endsection

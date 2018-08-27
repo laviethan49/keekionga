@@ -13,13 +13,17 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::prefix('posts')->group(function(){
 	Route::post('/new', 'PostController@createPost');
-	Route::get('/all', 'PostController@getAllPosts');
+	Route::get('/ten', 'PostController@getTenPosts');
 	Route::post('/edit/{postID}', 'PostController@editPost');
 	Route::post('/delete/{postID}', 'PostController@deletePost');
+});
+
+Route::prefix('products')->group(function(){
+	Route::post('/new', 'ProductController@createProduct');
+	Route::get('/all', 'ProductController@getProducts');
+	Route::get('/groups', 'ProductController@getGroupsList');
+	Route::post('/edit/{productID}', 'ProductController@editProduct');
+	Route::post('/delete/{productID}', 'ProductController@deleteProduct');
 });

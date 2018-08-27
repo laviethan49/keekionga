@@ -108,10 +108,14 @@
 
 #post_create {
  	position: relative;
- 	width: 100%;
+ 	width: 80%;
  	display: block;
  	background-color: white;
  	padding-bottom: 3%;
+ 	left: 10%;
+	border: solid #a3c3f7 1px;
+ 	box-shadow: 10px 10px 10px 0px #051e47;
+	border-radius: 3px;
 }
 
 #posts_container {
@@ -128,7 +132,7 @@
 .submit_button {
 	position: absolute;
 	right: 0%;
-	margin-bottom: 5%;
+	bottom: 0%;
 }
 
 .image_post {
@@ -142,7 +146,7 @@
 	display: block;
 }
 
-.loading_icon {
+#loading_icon {
 	position: relative;
 	left: 43%;
 	bottom: 5%;
@@ -206,4 +210,169 @@
 
 body {
 	background-color: #a3c3f7;
+}
+
+.product_form {
+	left: 10%;
+	width: 80%;
+	border: solid #a3c3f7 1px;
+ 	box-shadow: 10px 10px 10px 0px #051e47;
+	border-radius: 3px;
+	position: relative;
+	display: block;
+	background-color: white;
+ 	height: 200px;
+}
+
+.product_form_input {
+	float: left;
+	margin-left: 25px;
+	margin-top: 25px;
+	width: 150px;
+	position: relative;
+}
+
+.description-form-input {
+	float: left;
+	margin-left: 25px;
+	margin-top: 25px;
+	width: 300px;
+	position: relative;
+}
+
+#products_container {
+	display: block;
+	position: relative;
+	left: 10%;
+	width: 80%;
+	background-color: white;
+	border: solid #a3c3f7 1px;
+ 	box-shadow: 10px 10px 10px 0px #051e47;
+	border-radius: 3px;
+}
+
+#products_container_admin {
+	display: block;
+	position: relative;
+	left: 10%;
+	width: 80%;
+	background-color: white;
+	border: solid #a3c3f7 1px;
+ 	box-shadow: 10px 10px 10px 0px #051e47;
+	border-radius: 3px;
+	padding-bottom: 10px;
+}
+
+.product_container {
+	position: relative;
+	display: block;
+ 	height: 75px;
+}
+
+.product_title  {
+	float: left;
+	border-right: solid #a3c3f7 1px;
+	padding: auto;
+	width: 16.6%;
+	height: 100%;
+	text-align: center;
+	font-size: 18px;
+	padding-top: 2%;
+}
+
+.product_unit  {
+	float: left;
+	border-right: solid #a3c3f7 1px;
+	padding: auto;
+	width: 16.6%;
+	height: 100%;
+	text-align: center;
+	font-size: 18px;
+	padding-top: 2%;
+}
+
+.product_description  {
+	float: left;
+	border-right: solid #a3c3f7 1px;
+	padding: auto;
+	width: 16.6%;
+	height: 0%;
+	text-align: center;
+	font-size: 18px;
+	padding-top: 2%;
+}
+
+.product_price  {
+	float: left;
+	border-right: solid #a3c3f7 1px;
+	padding: auto;
+	width: 16.6%;
+	height: 100%;
+	text-align: center;
+	font-size: 18px;
+	padding-top: 2%;
+}
+
+.product_amount  {
+	float: left;
+	border-right: solid #a3c3f7 1px;
+	padding: auto;
+	width: 16.6%;
+	height: 100%;
+	text-align: center;
+	font-size: 18px;
+	padding-top: 2%;
+}
+
+.product_amount_input {
+	float: left;
+	border-right: solid #a3c3f7 1px;
+	padding: auto;
+	width: 16.6%;
+	text-align: center;
+	font-size: 18px;
+	padding-top: 2%;
+}
+
+.product_total {
+	float: left;
+	padding: auto;
+	width: 17%;
+	text-align: center;
+	font-size: 18px;
+	padding-top: 2%;
+}
+
+.product_total_ {
+	float: left;
+	padding: auto;
+	width: 17%;
+	text-align: center;
+	font-size: 18px;
+	padding-top: 2%;
+}
+
+.product_group {
+	text-align: center;
+	font-size: 32px;
+	margin-top: 2%;
+	text-decoration: underline;
+}
+
+.product_totals {
+	text-align: center;
+	font-size: 32px;
+	margin-top: 2%;
+}
+
+.product_edit {
+	position: relative;
+	margin-left: 4%;
+	margin-top: 2%;
+}
+
+.product_delete {
+	position: relative;
+	margin-left: 4%;
+	margin-top: 2%;
 }
