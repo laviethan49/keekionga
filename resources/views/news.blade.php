@@ -80,6 +80,8 @@
 		{
 			$('#loading_icon').hide();
 			data.forEach(function(item, key) {
+				var height = 150 + 100 * Math.floor(item['images'].length/6);
+
 				var post = document.createElement("div");
 					$(post).attr('class', 'post');
 					$(post).attr('id', 'post_'+key);
@@ -91,28 +93,34 @@
 					$(message).attr('class', 'post_message');
 					$(message).attr('id', 'post_message_'+key);
 					$(message).html(item['post'].message);
-				var image_container = document.createElement("div");
-					$(image_container).attr('class', 'post_images');
-					$(image_container).css('height', (150 + 100 * Math.floor(item['images'].length/6))+'px');
-					var images = [];
-					item['images'].forEach(function(picture, lock) {
-						var image = document.createElement("img");
-							$(image).attr('src', "{{ URL('') }}"+picture.path);
-							$(image).attr('class', 'post_image');
-							$(image).attr('id', 'post_image_'+key+'_'+lock);
-						images[lock] = image;
-					});
-				$(image_container).append(images);
+
 				$(post).append(title);
 				$(post).append(message);
-				$(post).append(image_container);
+				if(item['images'].length != 0)
+				{
+					var image_container = document.createElement("div");
+						$(image_container).attr('class', 'post_images');
+						$(image_container).css('height', height+'px');
+					var images = [];
+						item['images'].forEach(function(picture, lock) {
+							var image = document.createElement("img");
+								$(image).attr('src', "{{ URL('') }}"+picture.path);
+								$(image).attr('class', 'post_image');
+								$(image).attr('id', 'post_image_'+key+'_'+lock);
+							images[lock] = image;
+						});
+					$(image_container).append(images);
+					$(post).append(image_container);
+				}
 				$('#posts_container').append(post);
 			});
 		}
 		function showPostsAdmin(data)
 		{
 			$('.loading_icon').hide();
+
 			data.forEach(function(item, key) {
+				var height = 150 + 100 * Math.floor(item['images'].length/6);
 				var post = document.createElement("div");
 					$(post).attr('class', 'post');
 					$(post).attr('id', 'post_'+item['post'].id);
@@ -124,18 +132,6 @@
 					$(message).attr('class', 'post_message');
 					$(message).attr('id', 'post_message_'+item['post'].id);
 					$(message).html(item['post'].message);
-				var image_container = document.createElement("div");
-					$(image_container).attr('class', 'post_images');
-					$(image_container).attr('id', 'post_images_'+item['post'].id);
-					$(image_container).css('height', (150 + 100 * Math.floor(item['images'].length/6))+'px');
-					var images = [];
-					item['images'].forEach(function(picture, lock) {
-						var image = document.createElement("img");
-							$(image).attr('src', "{{ URL('') }}"+picture.path);
-							$(image).attr('class', 'post_image');
-							$(image).attr('id', 'post_image_'+item['post'].id+'_'+lock);
-						images[lock] = image;
-					});
 				var edit_button = document.createElement("button");
 					$(edit_button).attr('class', 'btn btn-warning edit_post');
 					$(edit_button).attr('id', 'edit_post_'+item['post'].id);
@@ -145,12 +141,28 @@
 					$(delete_button).attr('class', 'btn btn-danger delete_post');
 					$(delete_button).attr('onclick', 'deletePost('+item['post'].id+')');
 					$(delete_button).html('Delete Post');
-				$(image_container).append(images);
+
 				$(post).append(title);
 				$(post).append(message);
-				$(post).append(image_container);
 				$(post).append(edit_button);
 				$(post).append(delete_button);
+
+				if(item['images'].length != 0)
+				{
+					var image_container = document.createElement("div");
+						$(image_container).attr('class', 'post_images');
+						$(image_container).css('height', height+'px');
+					var images = [];
+						item['images'].forEach(function(picture, lock) {
+							var image = document.createElement("img");
+								$(image).attr('src', "{{ URL('') }}"+picture.path);
+								$(image).attr('class', 'post_image');
+								$(image).attr('id', 'post_image_'+key+'_'+lock);
+							images[lock] = image;
+						});
+					$(image_container).append(images);
+					$(post).append(image_container);
+				}
 				$('#posts_container_admin').append(post);
 			});
 		}
