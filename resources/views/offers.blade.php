@@ -657,7 +657,13 @@
 				$(itemInput).attr('value', total);
 				$(itemInput).attr('name', 'total');
 
+			var csrf = document.createElement("input");
+				$(csrf).attr('type', 'hidden');
+				$(csrf).attr('value', '{{csrf_token()}}');
+				$(csrf).attr('name', '_token');
+
 			$(emailForm).append(itemInput);
+			$(emailForm).append(csrf);
 
 			emailForm.submit();
 		}
