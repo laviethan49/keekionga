@@ -86,7 +86,7 @@ class ProductController extends Controller
             'total' => 'required'
         ]);
 
-		Mail::to('ethan.saville@maine.edu')->cc($req->user_email)->bcc('lsrawson@yahoo.com')->send(new KeekiongaMail($req->user_name, $req->user_phone, $req->user_comment, $req->grocery_item, $req->total));
+		Mail::to('clayton.spinney@yahoo.com')->cc($req->user_email)->bcc('lsrawson@yahoo.com')->send(new KeekiongaMail($req->user_name, $req->user_phone, $req->user_comment, $req->grocery_item, $req->total));
 	   
 	   return back()->withErrors(['Email Successfully Sent! A Copy Has Been Sent To You As Well.']);
     }

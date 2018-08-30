@@ -36,10 +36,12 @@ Route::prefix('products')->group(function(){
 		- Add in functionality to get all posts from a certain month.
 		- Add functionality for changing a post to be 'special' or not which would always have it at the top.
 	// Products
-		- Add in functionality to e-mail price list with user's changes with user's e-mail address, name, number, and a comment from the user.
 		- Add functionality for changing if a certain product is hidden or not.
 	// Philosophy
 		- Add in what we're about page that reads off of file to populate page. Currently have it, but not reading from a 		file.
 	// General
 		- Add functionality to change pictures around if Clayton wants a new picture.
+		- Mobile compatibility.
+	// Location
+		- Add areas for where our products are sold.
 */
