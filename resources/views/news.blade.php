@@ -10,13 +10,14 @@
 @section('content')
 	@auth
 		<div id="post_create">
+			{{-- {{dd($errors)}} --}}
 			@if($errors->any())
 				<h2><p class="error_message">{{$errors->first()}}</p></h2>
 			@endif
 			<form id="post_form" action="{{ URL('api/posts/new') }}" method="post" enctype="multipart/form-data">
 				<h3 class="centered">Create A New Post</h3>
-				<input class="input_text_box form-control" type="text" name="post_title" placeholder="Title Your Post" value="{{ old('post_title') }}">
-				<textarea class="input_text_box form-control" type="text" name="post_message" placeholder="Post Message Here">{{ old('post_message') }}</textarea>
+				<input required class="input_text_box form-control" type="text" name="post_title" placeholder="Title Your Post" value="{{ old('post_title') }}">
+				<textarea required class="input_text_box form-control" type="text" name="post_message" placeholder="Post Message Here">{{ old('post_message') }}</textarea>
 				<div class="image_post">
 					<p>
 						<u>Select Image(s) To Upload:</u>
@@ -44,31 +45,11 @@
 
 @section('script-location')
 	<script type="text/javascript">
-		function addImageUpload()
-		{
-			var elemelon = document.createElement("input");
-				$(elemelon).attr('type', 'file');
-				$(elemelon).attr('name', 'file[]');
-			$("#file_1").after(elemelon);
-			$(elemelon).before("<br>");
-		}
-		function removeImageUpload()
-		{
-			var elemelons = document.getElementsByName('file[]'),
-				elemelon = elemelons[elemelons.length - 1];
-
-			if(elemelons.length > 1)
-			{
-				$(elemelon).prev().remove();
-				$(elemelon).remove();
-			}
-		}
 		$(document).ready(function()
 		{
 		    $.ajax({
 		        url: "{{ URL('/api/posts/ten') }}",
 		        type: "GET",
-		        cache: false,
 		        success: function(data)
 		        {
 		        	showPosts(data);
@@ -114,6 +95,16 @@
 				}
 				$('#posts_container').append(post);
 			});
+
+			if($('#posts_container').children().length >= 11)
+			{
+				var showMore = document.createElement("button");
+					$(showMore).attr('class', 'post centered');
+					$(showMore).html("Show More Posts");
+					$(showMore).attr('onclick', 'getTenMore()');
+
+				$('#posts_container').append(showMore);
+			}
 		}
 		function showPostsAdmin(data)
 		{
@@ -151,6 +142,7 @@
 				{
 					var image_container = document.createElement("div");
 						$(image_container).attr('class', 'post_images');
+						$(image_container).attr('id', 'post_images_'+item['post'].id);
 						$(image_container).css('height', height+'px');
 					var images = [];
 						item['images'].forEach(function(picture, lock) {
@@ -165,6 +157,17 @@
 				}
 				$('#posts_container_admin').append(post);
 			});
+
+			if($('#posts_container_admin').children().length >= 11)
+			{
+				var showMore = document.createElement("button");
+					$(showMore).attr('class', 'btn btn-info btn_centered centered');
+					$(showMore).attr('id', 'show_more');
+					$(showMore).html('Show More Posts');
+					$(showMore).attr('onclick', 'getTenMoreAdmin()');
+					
+				$('#posts_container_admin').append(showMore);
+			}
 		}
 		function editPost(id)
 		{
@@ -192,30 +195,6 @@
 				$(input_message).attr('name', 'post_message_input');
 				$(input_message).html($(message).html());
 
-			var input_files = document.createElement("input");
-				$(input_files).attr('type', 'file');
-				$(input_files).attr('multiple', 'multiple');
-				$(input_files).attr('id', 'post_images_input');
-				$(input_files).attr('name', 'post_images_input[]');
-
-			var select_delete_files = document.createElement("div");
-				$(select_delete_files).attr('class', 'post_images');
-				$(select_delete_files).css('height', (150 + 100 * Math.floor($(images).children().length/6))+'px');
-				var children = images.children;
-				var iterations = children.length;
-				var selectables = [];
-				for(var i = 0; i < iterations; i++)
-				{
-					var select_file = document.createElement("img");
-						$(select_file).attr('src', children[i].src);
-						$(select_file).attr('class', children[i].className);
-						$(select_file).attr('id', 'post_selected_file_'+i);
-						$(select_file).attr('name', 0);
-						$(select_file).attr('onclick', 'selectFile('+i+')');
-					selectables.push($(select_file));
-				}
-				$(select_delete_files).html(selectables);
-
 			var submit_edit_button = document.createElement("button");
 				$(submit_edit_button).attr('class', 'btn btn-primary submit_button');
 				$(submit_edit_button).attr('type', 'submit');
@@ -226,10 +205,43 @@
 				$(input_form).attr('action', "{{ URL('/api/posts/edit') }}"+'/'+id);
 				$(input_form).attr('enctype', 'multipart/form-data');
 
+			var csrf = document.createElement("input");
+				$(csrf).attr('type', 'hidden');
+				$(csrf).attr('value', '{{csrf_token()}}');
+				$(csrf).attr('name', '_token');
+
+			var input_files = document.createElement("input");
+				$(input_files).attr('type', 'file');
+				$(input_files).attr('multiple', 'multiple');
+				$(input_files).attr('id', 'post_images_input');
+				$(input_files).attr('name', 'post_images_input[]');
+
 			$(input_form).append(input_title);
 			$(input_form).append(input_message);
-			$(input_form).append(select_delete_files);
+			$(input_form).append(csrf);
 			$(input_form).append(input_files);
+
+			if(images != null && images != undefined)
+			{
+				var select_delete_files = document.createElement("div");
+					$(select_delete_files).attr('class', 'post_images');
+					$(select_delete_files).css('height', (150 + 100 * Math.floor($(images).children().length/6))+'px');
+					var children = images.children;
+					var iterations = children.length;
+					var selectables = [];
+					for(var i = 0; i < iterations; i++)
+					{
+						var select_file = document.createElement("img");
+							$(select_file).attr('src', children[i].src);
+							$(select_file).attr('class', children[i].className);
+							$(select_file).attr('id', 'post_selected_file_'+i);
+							$(select_file).attr('name', 0);
+							$(select_file).attr('onclick', 'selectFile('+i+')');
+						selectables.push($(select_file));
+					}
+					$(select_delete_files).html(selectables);
+				$(input_form).append(select_delete_files);
+			}
 			$(input_form).append(submit_edit_button);
 
 			$(post).append(input_form);
@@ -244,6 +256,12 @@
 					$(input_form).attr('method', 'POST');
 					$(input_form).attr('action', "{{ URL('/api/posts/delete') }}"+'/'+id);
 
+				var csrf = document.createElement("input");
+					$(csrf).attr('type', 'hidden');
+					$(csrf).attr('value', '{{csrf_token()}}');
+					$(csrf).attr('name', '_token');
+
+				$(input_form).append(csrf);
 				$(post).append(input_form);
 				$(input_form).submit();
 			}
@@ -268,6 +286,23 @@
 				$(elmnt).attr('name', 0);
 				document.getElementById('post_terminated_file_'+id).remove();
 			}
+		}
+		function getTenMore()
+		{
+			
+		}
+		function getTenMoreAdmin()
+		{
+			var lastID = $('#posts_container_admin').children()[$('#posts_container_admin').children().length - 2].id.replace('post_', '');
+			$('#show_more').remove();
+			$.ajax({
+		        url: "{{ URL('/api/posts/more') }}"+'/'+lastID,
+		        type: "GET",
+		        success: function(data)
+		        {
+		        	showPostsAdmin(data);
+		        },
+		    });
 		}
 		// function addSortOption(data)
 		// {

@@ -9,10 +9,10 @@
 
 @section('content')
 	@auth
-		@if($errors->any())
-			<h2><p class="error_message">{{$errors->first()}}</p></h2>
-		@endif
 		<form id="product_form" method="post" action="{{ URL('api/products/new') }}" class="product_form">
+			@if($errors->any())
+				<h2><p class="error_message">{{$errors->first()}}</p></h2>
+			@endif
 		  <div class="form-group product_form_input">
 		    <label for="group">Group</label>
 		    <input list="group_choices" type="text" class="form-control" id="group" value="{{ old('group_input') }}" name="group_input" aria-describedby="groupHelp" placeholder="Group" required>
@@ -39,6 +39,7 @@
 		    <textarea class="form-control" id="description" name="description_input" placeholder="Description" required>{{ old('description_input') }}</textarea>
 		  </div>
 		  <button type="submit" class="btn btn-primary submit_button">Add Product</button>
+		  <input type="hidden" value="{{ csrf_token() }}" name="_token">
 		</form>
 		<div id="products_container_admin">
 			<div id="loading_icon">
@@ -52,6 +53,9 @@
 			</div>
 		</div>
 	@endauth
+		<button class="btn btn_centered btn-info" id="inquiry_email_btn" onclick="makeEmailDiv()">
+			Send An Inquiry For Items Selected
+		</button>
 @endsection
 
 @section('script-location')
@@ -136,7 +140,7 @@
 
 				data[item].forEach(function(product, key) {
 					var product_containers = document.createElement("div");
-						$(product_containers).attr('class', 'product_container');
+						$(product_containers).attr('class', 'product_container product');
 
 					var product_title = document.createElement('div');
 						$(product_title).attr('class', 'product_title');
@@ -162,6 +166,7 @@
 						$(product_amount).attr('class', 'product_amount_input');
 						$(product_amount).attr('id', 'product_amount_'+product.id);
 						$(product_amount).attr('type', 'number');
+						$(product_amount).attr('min', 0);
 						$(product_amount).attr('value', 0);
 						$(product_amount).attr('oninput', 'total('+product.id+')');
 
@@ -376,11 +381,17 @@
 				$(input_form).attr('method', 'POST');
 				$(input_form).attr('action', "{{ URL('/api/products/edit') }}"+'/'+id);
 
+			var csrf = document.createElement("input");
+				$(csrf).attr('type', 'hidden');
+				$(csrf).attr('value', '{{csrf_token()}}');
+				$(csrf).attr('name', '_token');
+
 			$(input_form).append(input_title);
 			$(input_form).append(input_unit);
 			$(input_form).append(input_description);
 			$(input_form).append(input_price);
 			$(input_form).append(submit_edit_button);
+			$(input_form).append(csrf);
 
 			$(product).prepend(input_form);
 		}
@@ -394,9 +405,116 @@
 					$(input_form).attr('method', 'POST');
 					$(input_form).attr('action', "{{ URL('/api/products/delete') }}"+'/'+id);
 
+				var csrf = document.createElement("input");
+					$(csrf).attr('type', 'hidden');
+					$(csrf).attr('value', '{{csrf_token()}}');
+					$(csrf).attr('name', '_token');
+
+				$(input_form).append(csrf);
+
 				$(product).append(input_form);
 				$(input_form).submit();
 			}
+		}
+		function makeEmailDiv()
+		{
+			$('#inquiry_email_btn').hide();
+			var emailContents = document.createElement("div");
+				$(emailContents).attr('class', 'email_form');
+
+			var emailForm = document.createElement('form');
+				$(emailForm).attr('method', 'post');
+				$(emailForm).attr('id', 'email_form');
+				$(emailForm).attr('action', '{{ URL('/api/products/email') }}');
+
+			var userMail = document.createElement("input");
+				$(userMail).attr('type', 'email');
+				$(userMail).attr('required', 'required');
+				$(userMail).attr('id', 'user_email');
+				$(userMail).attr('name', 'user_email');
+				$(userMail).attr('placeholder', 'E-Mail Address');
+				$(userMail).attr('class', 'form-text text-muted');
+
+			var userName = document.createElement("input");
+				$(userName).attr('type', 'text');
+				$(userName).attr('required', 'required');
+				$(userName).attr('id', 'user_name');
+				$(userName).attr('name', 'user_name');
+				$(userName).attr('placeholder', 'Your Name');
+				$(userName).attr('class', 'form-text text-muted');
+
+			var userPhone = document.createElement("input");
+				$(userPhone).attr('type', 'tel');
+				$(userPhone).attr('required', 'required');
+				$(userPhone).attr('id', 'user_phone');
+				$(userPhone).attr('name', 'user_phone');
+				$(userPhone).attr('placeholder', '(207)-867-5309');
+				$(userPhone).attr('class', 'form-text text-muted');
+
+			var userComment = document.createElement("textarea");
+				$(userComment).attr('id', 'user_comment');
+				$(userComment).attr('name', 'user_comment');
+				$(userComment).attr('placeholder', 'Add An Optional Comment Here');
+				$(userComment).attr('class', 'form-text text-muted');
+
+			var sendButton = document.createElement("input");
+				$(sendButton).attr('type', 'button');
+				$(sendButton).attr('class', 'btn btn-primary submit_button');
+				$(sendButton).attr('onclick', 'sendEmail()');
+				$(sendButton).attr('value', 'Send E-Mail');
+
+			var csrf = document.createElement("input");
+				$(csrf).attr('type', 'hidden');
+				$(csrf).attr('value', '{{csrf_token()}}');
+				$(csrf).attr('name', '_token');
+
+			$(emailForm).append(userMail);
+			$(emailForm).append(userName);
+			$(emailForm).append(userPhone);
+			$(emailForm).append(userComment);
+			$(emailForm).append(sendButton);
+			$(emailForm).append(csrf);
+
+			$(emailContents).append(emailForm);
+
+			$('#products_container').append(emailContents);
+		}
+		function sendEmail()
+		{
+			var products = document.getElementsByClassName('product');
+			var total = 0;
+			var emailForm = document.getElementById('email_form');
+
+			for(var i = 0; i < products.length; i++)
+			{
+				if(products[i].getElementsByClassName('product_amount_input')[0].value != 0)
+				{
+					var items = [];
+					var item = products[i].getElementsByClassName('product_title')[0].innerHTML;
+					var amount = products[i].getElementsByClassName('product_amount_input')[0].value;
+					var price = products[i].getElementsByClassName('product_price')[0].innerHTML.replace('$', '');
+					
+					items = [amount, item];
+
+					var itemDetails = document.createElement("input");
+						$(itemDetails).attr('hidden', 'hidden');
+						$(itemDetails).attr('value', items);
+						$(itemDetails).attr('name', 'grocery_item[]');
+
+					$(emailForm).append(itemDetails);
+
+					total += amount * price;
+				}
+			}
+
+			var itemInput = document.createElement("input");
+				$(itemInput).attr('hidden', 'hidden');
+				$(itemInput).attr('value', total);
+				$(itemInput).attr('name', 'total');
+
+			$(emailForm).append(itemInput);
+
+			emailForm.submit();
 		}
 	</script>
 @endsection

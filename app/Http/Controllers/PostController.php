@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Validation\ValidationException;
 use App\Post;
 use App\Image;
 
@@ -56,10 +58,10 @@ class PostController extends Controller
 
     public function getTenPosts()
     {
-    	$allPosts = Post::orderBy('created_at', 'desc')->take(10)->get();
+    	$tenPosts = Post::orderBy('created_at', 'desc')->take(10)->get();
     	$postsWithImages = array();
 
-    	foreach ($allPosts as $key => $post)
+    	foreach ($tenPosts as $key => $post)
     	{
     		$postsWithImages[$key] = [
     			"post" => $post,
@@ -68,6 +70,22 @@ class PostController extends Controller
     	}
 
     	return response()->json($postsWithImages);
+    }
+
+    public function tenMorePosts(Request $req)
+    {
+        $tenMore = Post::where('id', '<', $req->lastID)->take(10)->get();
+        $postsWithImages = array();
+
+        foreach ($tenMore as $key => $post)
+        {
+            $postsWithImages[$key] = [
+                "post" => $post,
+                "images" => $post->images
+            ];
+        }
+
+        return response()->json($postsWithImages);
     }
 
     public function getAllPosts()

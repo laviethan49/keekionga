@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Product;
+use App\Mail\KeekiongaMail;
 
 class ProductController extends Controller
 {
@@ -80,5 +81,13 @@ class ProductController extends Controller
     public function sendEmailForInquiry(Request $req)
     {
     	dd($req->all());
+    	$validatedData = $req->validate([
+            'grocery_list' => 'required',
+            'total' => 'required'
+        ]);
+
+		Mail::to('ethan.saville@maaine.edu')->cc($req->user_email)->send(new KeekiongaMail($req->user_name, $req->user_phone, $req->user_comment, $req->grocery_list, $req->total));
+	   
+	   return back()->withErrors(['Email Successfully Sent! A Copy Has Been Sent To You As Well.']);
     }
 }
