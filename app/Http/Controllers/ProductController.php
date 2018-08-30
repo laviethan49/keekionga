@@ -80,7 +80,7 @@ class ProductController extends Controller
 
     public function sendEmailForInquiry(Request $req)
     {
-    	dd($req->all());
+    	// dd($req->all());
     	$validatedData = $req->validate([
             'grocery_list' => 'required',
             'total' => 'required'
