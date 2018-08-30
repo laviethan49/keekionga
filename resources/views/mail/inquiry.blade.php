@@ -2,10 +2,10 @@
 
 @section('content')
 	<div>
-		Hello {{$name}}, thank you for your inquiry, {{$name}} would like
-		@foreach($list as $key => $listItem)
+		{{$name}} would like
+		@foreach($list as $listItem)
 			<br>
-			{{ echo str_replace(',', ' ', $listItem) }},
+			{{ str_replace(',', ' ', $listItem) }},
 		@endforeach
 		<br><br>
 		for a total of ${{ $total }}. {{ $name }} can be reached at {{ $phone }}.

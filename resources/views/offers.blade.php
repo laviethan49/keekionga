@@ -48,6 +48,9 @@
 		</div>
 	@else
 		<div id="products_container">
+			@if($errors->any())
+				<h2><p class="error_message">{{$errors->first()}}</p></h2>
+			@endif
 			<div id="loading_icon">
 				<img src="{{ URL('/storage/loading/cloading.gif') }}" />
 			</div>

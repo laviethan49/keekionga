@@ -19,7 +19,6 @@ class KeekiongaMail extends Mailable
      */
     public function __construct($name, $phone, $comment, $list, $total)
     {
-        $this->email = $email;
         $this->name = $name;
         $this->phone = $phone;
         $this->comment = $comment;
