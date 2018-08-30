@@ -12,7 +12,7 @@
 		<div id="post_create">
 			{{-- {{dd($errors)}} --}}
 			@if($errors->any())
-				<h2><p class="error_message">{{$errors->first()}}</p></h2>
+				<p class="error_message">{{$errors->first()}}</p>
 			@endif
 			<form id="post_form" action="{{ URL('api/posts/new') }}" method="post" enctype="multipart/form-data">
 				<h3 class="centered">Create A New Post</h3>
@@ -29,12 +29,30 @@
 				<input type="hidden" value="{{ csrf_token() }}" name="_token">
 			</form>
 		</div>
+		<div id="selector">
+			Select A Month To See All Posts From Then
+			<select id="month_selector" onchange="getPostsForMonth()">
+				<option value="0">No Sorting</option>
+			</select>
+		</div>
+		<div id="posts_container_special_admin">
+			
+		</div>
 		<div id="posts_container_admin">
 			<div id="loading_icon">
 				<img src="{{ URL('/storage/loading/cloading.gif') }}" />
 			</div>
 		</div>
 	@else
+		<div id="selector">
+			Select A Month To See All Posts From Then
+			<select id="month_selector" onchange="getPostsForMonth()">
+				<option value="0">No Sorting</option>
+			</select>
+		</div>
+		<div id="posts_container_special">
+			
+		</div>
 		<div id="posts_container">
 			<div id="loading_icon">
 				<img src="{{ URL('/storage/loading/cloading.gif') }}" />
@@ -54,6 +72,7 @@
 		        {
 		        	showPosts(data);
 		        	showPostsAdmin(data);
+		        	addSortOptions();
 		        },
 		    });
 		});
@@ -61,45 +80,52 @@
 		{
 			$('#loading_icon').hide();
 			data.forEach(function(item, key) {
-				var height = 150 + 100 * Math.floor(item['images'].length/6);
-
-				var post = document.createElement("div");
-					$(post).attr('class', 'post');
-					$(post).attr('id', 'post_'+key);
-				var title = document.createElement("div");
-					$(title).attr('class', 'post_title centered');
-					$(title).attr('id', 'post_title_'+key);
-					$(title).html(item['post'].title);
-				var message = document.createElement("div");
-					$(message).attr('class', 'post_message');
-					$(message).attr('id', 'post_message_'+key);
-					$(message).html(item['post'].message);
-
-				$(post).append(title);
-				$(post).append(message);
-				if(item['images'].length != 0)
+				if(item['post'].hidden == 0)
 				{
-					var image_container = document.createElement("div");
-						$(image_container).attr('class', 'post_images');
-						$(image_container).css('height', height+'px');
-					var images = [];
-						item['images'].forEach(function(picture, lock) {
-							var image = document.createElement("img");
-								$(image).attr('src', "{{ URL('') }}"+picture.path);
-								$(image).attr('class', 'post_image');
-								$(image).attr('id', 'post_image_'+key+'_'+lock);
-							images[lock] = image;
-						});
-					$(image_container).append(images);
-					$(post).append(image_container);
+					var height = 150 + 100 * Math.floor(item['images'].length/6);
+
+					var post = document.createElement("div");
+						$(post).attr('class', 'post');
+						$(post).attr('id', 'post_'+item['post'].id);
+					var title = document.createElement("div");
+						$(title).attr('class', 'post_title centered');
+						$(title).attr('id', 'post_title_'+item['post'].id);
+						$(title).html(item['post'].title);
+					var message = document.createElement("div");
+						$(message).attr('class', 'post_message');
+						$(message).attr('id', 'post_message_'+item['post'].id);
+						$(message).html(item['post'].message);
+
+					$(post).append(title);
+					$(post).append(message);
+					if(item['images'].length != 0)
+					{
+						var image_container = document.createElement("div");
+							$(image_container).attr('class', 'post_images');
+							$(image_container).css('height', height+'px');
+						var images = [];
+							item['images'].forEach(function(picture, lock) {
+								var image = document.createElement("img");
+									$(image).attr('src', "{{ URL('') }}"+picture.path);
+									$(image).attr('class', 'post_image');
+									$(image).attr('id', 'post_image_'+item['post'].id);
+								images[lock] = image;
+							});
+						$(image_container).append(images);
+						$(post).append(image_container);
+					}
+					if(item['post'].special == 0)
+						$('#posts_container').append(post);
+					else
+						$('#posts_container_special').append(post);
 				}
-				$('#posts_container').append(post);
 			});
 
 			if($('#posts_container').children().length >= 11)
 			{
 				var showMore = document.createElement("button");
-					$(showMore).attr('class', 'post centered');
+					$(showMore).attr('class', 'btn btn-info btn_centered centered');
+					$(showMore).attr('id', 'show_more');
 					$(showMore).html("Show More Posts");
 					$(showMore).attr('onclick', 'getTenMore()');
 
@@ -133,10 +159,46 @@
 					$(delete_button).attr('onclick', 'deletePost('+item['post'].id+')');
 					$(delete_button).html('Delete Post');
 
+				if(item['post'].hidden == 0)
+				{
+					var hide_button = document.createElement("button");
+						$(hide_button).attr('class', 'btn btn-info hide_post');
+						$(hide_button).attr('id', 'hide_button_'+item['post'].id);
+						$(hide_button).attr('onclick', 'hidePost('+item['post'].id+')');
+						$(hide_button).html('Hide Post');
+				}
+				else
+				{
+					var hide_button = document.createElement("button");
+						$(hide_button).attr('class', 'btn btn-info hide_post');
+						$(hide_button).attr('id', 'hide_button_'+item['post'].id);
+						$(hide_button).attr('onclick', 'showPost('+item['post'].id+')');
+						$(hide_button).html('Show Post');
+				}
+
+				if(item['post'].special == 0)
+				{
+					var special_button = document.createElement("button");
+						$(special_button).attr('class', 'btn btn-info special_post');
+						$(special_button).attr('id', 'special_button_'+item['post'].id);
+						$(special_button).attr('onclick', 'specialPost('+item['post'].id+')');
+						$(special_button).html('Make Post Special');
+				}
+				else
+				{
+					var special_button = document.createElement("button");
+						$(special_button).attr('class', 'btn btn-info special_post');
+						$(special_button).attr('id', 'special_button_'+item['post'].id);
+						$(special_button).attr('onclick', 'unspecialPost('+item['post'].id+')');
+						$(special_button).html('Make Post Un-Special');
+				}
+
 				$(post).append(title);
 				$(post).append(message);
 				$(post).append(edit_button);
 				$(post).append(delete_button);
+				$(post).append(hide_button);
+				$(post).append(special_button);
 
 				if(item['images'].length != 0)
 				{
@@ -155,7 +217,11 @@
 					$(image_container).append(images);
 					$(post).append(image_container);
 				}
-				$('#posts_container_admin').append(post);
+
+				if(item['post'].special == 0)
+					$('#posts_container_admin').append(post);
+				else
+					$('#posts_container_special_admin').append(post);
 			});
 
 			if($('#posts_container_admin').children().length >= 11)
@@ -168,6 +234,14 @@
 					
 				$('#posts_container_admin').append(showMore);
 			}
+		}
+		function showMonthPosts(data)
+		{
+			showPosts(data);
+		}
+		function showMonthPostsAdmin(data)
+		{
+			showPostsAdmin(data);
 		}
 		function editPost(id)
 		{
@@ -289,7 +363,16 @@
 		}
 		function getTenMore()
 		{
-			
+			var lastID = $('#posts_container').children()[$('#posts_container').children().length - 2].id.replace('post_', '');
+			$('#show_more').remove();
+			$.ajax({
+		        url: "{{ URL('/api/posts/more') }}"+'/'+lastID,
+		        type: "GET",
+		        success: function(data)
+		        {
+		        	showPosts(data);
+		        },
+		    });
 		}
 		function getTenMoreAdmin()
 		{
@@ -304,9 +387,181 @@
 		        },
 		    });
 		}
-		// function addSortOption(data)
-		// {
-		// 	data.forEach()
-		// }
+		function addSortOptions()
+		{
+			$.ajax({
+		        url: "{{ URL('/api/posts/months') }}",
+		        type: "GET",
+		        success: function(data)
+		        {
+		        	Object.keys(data).forEach(function(item){
+		        		var selection = document.createElement("option");
+		        			$(selection).attr('value', item);
+		        			$(selection).html(data[item]);
+		        		$('#month_selector').append(selection);
+		        	});
+		        },
+		    });
+		}
+		function getPostsForMonth()
+		{
+			$('#loading_icon').show();
+			var selected = $('#month_selector').val();
+			$(document.getElementsByClassName('post')).remove();
+			$(document.getElementById('show_more')).remove();
+
+			if(selected == 0)
+			{
+				$.ajax({
+			        url: "{{ URL('/api/posts/ten') }}",
+			        type: "GET",
+			        success: function(data)
+			        {
+			        	$('#loading_icon').hide();
+			        	showPosts(data);
+			        	showPostsAdmin(data);
+			        },
+			    });
+			}
+			else
+			{
+				$.ajax({
+			        url: "{{ URL('/api/posts/monthly_posts') }}"+'/'+selected,
+			        type: "GET",
+			        success: function(data)
+			        {
+			        	$('#loading_icon').hide();
+			        	showMonthPosts(data);
+			        	showMonthPostsAdmin(data);			        	
+			        },
+			    });
+			}
+		}
+		function hidePost(id)
+		{
+			if(confirm("Hiding this will cause it to not appear in the list, do you still wish to continue?"))
+			{
+				$.ajax({
+			        url: "{{ URL('/api/posts/hide') }}"+'/'+id,
+			        type: "POST",
+			        cache: false,
+			        data: { _token: '{{ csrf_token() }}'},
+			        success: function(data)
+			        {
+			        	$('.error_message').remove();
+
+			        	var error = document.createElement("p");
+			        		$(error).attr('class', 'error_message');
+			        		$(error).html("Post Successfully Hidden");
+
+			        	$('#hide_button_'+id).attr('onclick', 'showPost('+id+')');
+			        	$('#hide_button_'+id).html('Show');
+			        	$('#post_form').prepend(error);
+			        },
+			        error: function(error_mess)
+			        {
+			        	var error = document.createElement("p");
+			        		$(error).attr('class', 'error_message');
+			        		$(error).html("Post Not Hidden, Error Occurred");
+
+			        	$('#post_form').prepend(error);
+			        }
+			    });
+			}
+		}
+		function showPost(id)
+		{
+			if(confirm("Showing this will cause it to appear in the list, do you still wish to continue?"))
+			{
+				$.ajax({
+			        url: "{{ URL('/api/posts/show') }}"+'/'+id,
+			        type: "POST",
+			        cache: false,
+			        data: { _token: '{{ csrf_token() }}'},
+			        success: function(data)
+			        {
+			        	$('.error_message').remove();
+			        	var error = document.createElement("p");
+			        		$(error).attr('class', 'error_message');
+			        		$(error).html("Post Successfully Shown");
+
+			        	$('#hide_button_'+id).attr('onclick', 'hidePost('+id+')');
+			        	$('#hide_button_'+id).html('Hide');
+			        	$('#post_form').prepend(error);
+			        },
+			        error: function(data)
+			        {
+			        	var error = document.createElement("p");
+			        		$(error).attr('class', 'error_message');
+			        		$(error).html("Post Not Shown, Error Occurred");
+
+			        	$('#post_form').prepend(error);
+			        }
+			    });
+			}
+		}
+		function specialPost(id)
+		{
+			if(confirm("Making This Post Special Will Make It Appear At The Top of The List, Continue?"))
+			{
+				$.ajax({
+			        url: "{{ URL('/api/posts/special') }}"+'/'+id,
+			        type: "POST",
+			        cache: false,
+			        data: { _token: '{{ csrf_token() }}'},
+			        success: function(data)
+			        {
+			        	$('.error_message').remove();
+
+			        	var error = document.createElement("p");
+			        		$(error).attr('class', 'error_message');
+			        		$(error).html("Post Successfully Made Special!");
+
+			        	$('#special_button_'+id).attr('onclick', 'unspecialPost('+id+')');
+			        	$('#special_button_'+id).html('Make Post Un-Special');
+			        	$('#post_create').prepend(error);
+			        },
+			        error: function(error_mess)
+			        {
+			        	var error = document.createElement("p");
+			        		$(error).attr('class', 'error_message');
+			        		$(error).html("Post Not Made Special, Error Occurred");
+
+			        	$('#post_create').prepend(error);
+			        }
+			    });
+			}
+		}
+		function unspecialPost(id)
+		{
+			if(confirm("Making This Post Not Special Will Make It Not Appear At The Top of The List, Continue?"))
+			{
+				$.ajax({
+			        url: "{{ URL('/api/posts/unspecial') }}"+'/'+id,
+			        type: "POST",
+			        cache: false,
+			        data: { _token: '{{ csrf_token() }}'},
+			        success: function(data)
+			        {
+			        	$('.error_message').remove();
+			        	var error = document.createElement("p");
+			        		$(error).attr('class', 'error_message');
+			        		$(error).html("Post Successfully Made Un-Special!");
+
+			        	$('#special_button_'+id).attr('onclick', 'specialPost('+id+')');
+			        	$('#special_button_'+id).html('Make Post Special');
+			        	$('#post_create').prepend(error);
+			        },
+			        error: function(data)
+			        {
+			        	var error = document.createElement("p");
+			        		$(error).attr('class', 'error_message');
+			        		$(error).html("Post Not Made Un-Special, Error Occurred");
+
+			        	$('#post_create').prepend(error);
+			        }
+			    });
+			}
+		}
 	</script>
 @endsection

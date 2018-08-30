@@ -90,4 +90,22 @@ class ProductController extends Controller
 	   
 	   return back()->withErrors(['Email Successfully Sent! A Copy Has Been Sent To You As Well.']);
     }
+
+    public function hideProduct(Request $req)
+    {
+        $product = Product::find($req->productID);
+            $product->hidden = 1;
+        $product->save();
+
+        return response()->json($product);
+    }
+
+    public function showProduct(Request $req)
+    {
+        $product = Product::find($req->productID);
+            $product->hidden = 0;
+        $product->save();
+
+        return response()->json($product);
+    }
 }

@@ -4,8 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\DB;
 use App\Post;
 use App\Image;
 
@@ -74,7 +73,7 @@ class PostController extends Controller
 
     public function tenMorePosts(Request $req)
     {
-        $tenMore = Post::where('id', '<', $req->lastID)->take(10)->get();
+        $tenMore = Post::orderBy('created_at', 'desc')->where('id', '<', $req->lastID)->take(10)->get();
         $postsWithImages = array();
 
         foreach ($tenMore as $key => $post)
@@ -170,5 +169,72 @@ class PostController extends Controller
         Post::find($id)->delete();
 
         return back()->withErrors(['Post Successfully Deleted!']);
+    }
+
+    public function getMonthOptions()
+    {
+        $posts = Post::all();
+        $months = array();
+
+        foreach ($posts as $key => $post)
+        {
+            $month = $post->created_at->format("F");
+            $monthNum = $post->created_at->format("n");
+
+            if(!in_array([$monthNum => $month], $months))
+                $months[$monthNum] = $month;
+        }
+
+        return response()->json($months);
+    }
+
+    public function getPostsForMonth(Request $req)
+    {
+        $month = $req->month_num;
+        $postsForMonth = Post::orderBy('created_at', 'desc')->where( DB::raw('MONTH(created_at)'), '=', $month )->get();
+        $postsWithImages = array();
+
+        foreach ($postsForMonth as $key => $post)
+        {
+            $postsWithImages[$key] = [
+                "post" => $post,
+                "images" => $post->images
+            ];
+        }
+
+        return response()->json($postsWithImages);
+    }
+
+    public function special(Request $req)
+    {
+        $post = Post::find($req->postID);
+            $post->special = 1;
+        $post->save();
+
+        return response()->json($post);
+    }
+    public function unspecial(Request $req)
+    {
+        $post = Post::find($req->postID);
+            $post->special = 0;
+        $post->save();
+
+        return response()->json($post);
+    }
+    public function hidePost(Request $req)
+    {
+        $post = Post::find($req->postID);
+            $post->hidden = 1;
+        $post->save();
+
+        return response()->json($post);
+    }
+    public function showPost(Request $req)
+    {
+        $post = Post::find($req->postID);
+            $post->hidden = 0;
+        $post->save();
+
+        return response()->json($post);
     }
 }

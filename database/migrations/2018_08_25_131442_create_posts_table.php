@@ -19,6 +19,7 @@ class CreatePostsTable extends Migration
             $table->string('title', 500);
             $table->string('message', 5000);
             $table->tinyInteger('special')->default(0);
+            $table->tinyInteger('hidden')->default(0);
             $table->timestamps();
         });
     }

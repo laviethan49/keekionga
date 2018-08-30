@@ -21,6 +21,7 @@ class CreateProductsTable extends Migration
             $table->string('unit', 10);
             $table->string('description', 500);
             $table->float('price', 10);
+            $table->tinyInteger('hidden')->default(0);
             $table->timestamps();
         });
     }

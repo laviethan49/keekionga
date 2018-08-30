@@ -11,7 +11,7 @@
 	@auth
 		<form id="product_form" method="post" action="{{ URL('api/products/new') }}" class="product_form">
 			@if($errors->any())
-				<h2><p class="error_message">{{$errors->first()}}</p></h2>
+				<p class="error_message">{{$errors->first()}}</p>
 			@endif
 		  <div class="form-group product_form_input">
 		    <label for="group">Group</label>
@@ -55,10 +55,10 @@
 				<img src="{{ URL('/storage/loading/cloading.gif') }}" />
 			</div>
 		</div>
-	@endauth
 		<button class="btn btn_centered btn-info" id="inquiry_email_btn" onclick="makeEmailDiv()">
 			Send An Inquiry For Items Selected
 		</button>
+	@endauth
 @endsection
 
 @section('script-location')
@@ -135,59 +135,67 @@
 			{
 				var item = Object.keys(data)[i];
 
-				var product_containers = document.createElement("div");
+				var amountOfItems = countShownItems(data[item]);
+
+				if(amountOfItems != 0)
+				{
+					var product_containers = document.createElement("div");
 						$(product_containers).attr('class', 'product_container product_group');
 						$(product_containers).html(item);
 
-				$(container).append(product_containers);
-
-				data[item].forEach(function(product, key) {
-					var product_containers = document.createElement("div");
-						$(product_containers).attr('class', 'product_container product');
-
-					var product_title = document.createElement('div');
-						$(product_title).attr('class', 'product_title');
-						$(product_title).attr('id', 'product_title_'+product.id);
-						$(product_title).html(product.product);
-
-					var product_unit = document.createElement('div');
-						$(product_unit).attr('class', 'product_unit');
-						$(product_unit).attr('id', 'product_unit_'+product.id);
-						$(product_unit).html(product.unit);
-
-					var product_description = document.createElement('div');
-						$(product_description).attr('class', 'product_description');
-						$(product_description).attr('id', 'product_description_'+product.id);
-						$(product_description).html(product.description);
-
-					var product_price = document.createElement('div');
-						$(product_price).attr('class', 'product_price');
-						$(product_price).attr('id', 'product_price_'+product.id);
-						$(product_price).html('$'+product.price);
-
-					var product_amount = document.createElement('input');
-						$(product_amount).attr('class', 'product_amount_input');
-						$(product_amount).attr('id', 'product_amount_'+product.id);
-						$(product_amount).attr('type', 'number');
-						$(product_amount).attr('min', 0);
-						$(product_amount).attr('value', 0);
-						$(product_amount).attr('oninput', 'total('+product.id+')');
-
-					var product_total = document.createElement('input');
-						$(product_total).attr('class', 'product_total');
-						$(product_total).attr('disabled', 'disabled');
-						$(product_total).attr('id', 'product_total_'+product.id);
-						$(product_total).attr('value', '$0');
-
-					$(product_containers).append(product_title);
-					$(product_containers).append(product_unit);
-					$(product_containers).append(product_description);
-					$(product_containers).append(product_price);
-					$(product_containers).append(product_amount);
-					$(product_containers).append(product_total);
-
 					$(container).append(product_containers);
-				});
+
+					data[item].forEach(function(product, key) {
+						if(product.hidden == 0)
+						{
+							var product_containers = document.createElement("div");
+								$(product_containers).attr('class', 'product_container product');
+
+							var product_title = document.createElement('div');
+								$(product_title).attr('class', 'product_title');
+								$(product_title).attr('id', 'product_title_'+product.id);
+								$(product_title).html(product.product);
+
+							var product_unit = document.createElement('div');
+								$(product_unit).attr('class', 'product_unit');
+								$(product_unit).attr('id', 'product_unit_'+product.id);
+								$(product_unit).html(product.unit);
+
+							var product_description = document.createElement('div');
+								$(product_description).attr('class', 'product_description');
+								$(product_description).attr('id', 'product_description_'+product.id);
+								$(product_description).html(product.description);
+
+							var product_price = document.createElement('div');
+								$(product_price).attr('class', 'product_price');
+								$(product_price).attr('id', 'product_price_'+product.id);
+								$(product_price).html('$'+product.price);
+
+							var product_amount = document.createElement('input');
+								$(product_amount).attr('class', 'product_amount_input');
+								$(product_amount).attr('id', 'product_amount_'+product.id);
+								$(product_amount).attr('type', 'number');
+								$(product_amount).attr('min', 0);
+								$(product_amount).attr('value', 0);
+								$(product_amount).attr('oninput', 'total('+product.id+')');
+
+							var product_total = document.createElement('input');
+								$(product_total).attr('class', 'product_total');
+								$(product_total).attr('disabled', 'disabled');
+								$(product_total).attr('id', 'product_total_'+product.id);
+								$(product_total).attr('value', '$0');
+
+							$(product_containers).append(product_title);
+							$(product_containers).append(product_unit);
+							$(product_containers).append(product_description);
+							$(product_containers).append(product_price);
+							$(product_containers).append(product_amount);
+							$(product_containers).append(product_total);
+
+							$(container).append(product_containers);
+						}
+					});
+				}
 			}
 			var product_containers = document.createElement("div");
 				$(product_containers).attr('class', 'product_container product_totals');
@@ -224,21 +232,16 @@
 				$(product_price).attr('class', 'product_price');
 				$(product_price).attr('id', 'product_price_');
 				$(product_price).html("Price");
-			var product_amount = document.createElement('div');
-				$(product_amount).attr('class', 'product_amount');
-				$(product_amount).attr('id', 'product_amount_');
-				$(product_amount).html("Edit Product");
-			var product_total = document.createElement('div');
-				$(product_total).attr('class', 'product_total_');
-				$(product_total).attr('id', 'product_total_');
-				$(product_total).html("Delete Product");
+			var product_fixture = document.createElement('div');
+				$(product_fixture).attr('class', 'product_fixture');
+				$(product_fixture).attr('id', 'product_fixture_');
+				$(product_fixture).html("Edit, Delete, or Hide Product");
 
 			$(product_containers).append(product_title);
 			$(product_containers).append(product_unit);
 			$(product_containers).append(product_description);
 			$(product_containers).append(product_price);
-			$(product_containers).append(product_amount);
-			$(product_containers).append(product_total);
+			$(product_containers).append(product_fixture);
 
 			$(container).append(product_containers);
 
@@ -253,63 +256,140 @@
 				$(container).append(product_containers);
 
 				data[item].forEach(function(product, key) {
-					var product_containers = document.createElement("div");
-						$(product_containers).attr('class', 'product_container');
-						$(product_containers).attr('id', 'product_container_'+product.id);
+					if(product.hidden == 0)
+					{
+						var product_containers = document.createElement("div");
+							$(product_containers).attr('class', 'product_container');
+							$(product_containers).attr('id', 'product_container_'+product.id);
 
-					var product_title = document.createElement('div');
-						$(product_title).attr('class', 'product_title');
-						$(product_title).attr('id', 'product_title_'+product.id);
-						$(product_title).html(product.product);
+						var product_title = document.createElement('div');
+							$(product_title).attr('class', 'product_title');
+							$(product_title).attr('id', 'product_title_'+product.id);
+							$(product_title).html(product.product);
 
-					var product_unit = document.createElement('div');
-						$(product_unit).attr('class', 'product_unit');
-						$(product_unit).attr('id', 'product_unit_'+product.id);
-						$(product_unit).html(product.unit);
+						var product_unit = document.createElement('div');
+							$(product_unit).attr('class', 'product_unit');
+							$(product_unit).attr('id', 'product_unit_'+product.id);
+							$(product_unit).html(product.unit);
 
-					var product_description = document.createElement('div');
-						$(product_description).attr('class', 'product_description');
-						$(product_description).attr('id', 'product_description_'+product.id);
-						$(product_description).html(product.description);
+						var product_description = document.createElement('div');
+							$(product_description).attr('class', 'product_description');
+							$(product_description).attr('id', 'product_description_'+product.id);
+							$(product_description).html(product.description);
 
-					var product_price = document.createElement('div');
-						$(product_price).attr('class', 'product_price');
-						$(product_price).attr('id', 'product_price_'+product.id);
-						$(product_price).html('$'+product.price);
+						var product_price = document.createElement('div');
+							$(product_price).attr('class', 'product_price');
+							$(product_price).attr('id', 'product_price_'+product.id);
+							$(product_price).html('$'+product.price);
 
-					var product_amount = document.createElement('input');
-						$(product_amount).attr('class', 'product_amount_input');
-						$(product_amount).attr('id', 'product_amount_'+product.id);
-						$(product_amount).attr('type', 'number');
-						$(product_amount).attr('value', 0);
-						$(product_amount).attr('oninput', 'total('+product.id+')');
+						var product_amount = document.createElement('input');
+							$(product_amount).attr('class', 'product_amount_input');
+							$(product_amount).attr('id', 'product_amount_'+product.id);
+							$(product_amount).attr('type', 'number');
+							$(product_amount).attr('value', 0);
+							$(product_amount).attr('oninput', 'total('+product.id+')');
 
-					var product_total = document.createElement('input');
-						$(product_total).attr('class', 'product_total');
-						$(product_total).attr('disabled', 'disabled');
-						$(product_total).attr('id', 'product_total_'+product.id);
-						$(product_total).attr('value', '$0');
+						var product_total = document.createElement('input');
+							$(product_total).attr('class', 'product_total');
+							$(product_total).attr('disabled', 'disabled');
+							$(product_total).attr('id', 'product_total_'+product.id);
+							$(product_total).attr('value', '$0');
 
-					var product_edit = document.createElement("button");
-						$(product_edit).attr('class', 'product_edit btn btn-warning');
-						$(product_edit).attr('id', 'product_edit_'+product.id);
-						$(product_edit).attr('onclick', 'editProduct('+product.id+')');
-						$(product_edit).html('Edit Product');
+						var product_edit = document.createElement("button");
+							$(product_edit).attr('class', 'product_edit btn btn-warning');
+							$(product_edit).attr('id', 'product_edit_'+product.id);
+							$(product_edit).attr('onclick', 'editProduct('+product.id+')');
+							$(product_edit).html('Edit');
 
-					var product_delete = document.createElement("button");
-						$(product_delete).attr('class', 'product_delete btn btn-danger');
-						$(product_delete).attr('id', 'product_delete_'+product.id);
-						$(product_delete).attr('onclick', 'deleteProduct('+product.id+')');
-						$(product_delete).html('Delete Product');
+						var product_delete = document.createElement("button");
+							$(product_delete).attr('class', 'product_delete btn btn-danger');
+							$(product_delete).attr('id', 'product_delete_'+product.id);
+							$(product_delete).attr('onclick', 'deleteProduct('+product.id+')');
+							$(product_delete).html('Delete');
 
-					$(product_containers).append(product_title);
-					$(product_containers).append(product_unit);
-					$(product_containers).append(product_description);
-					$(product_containers).append(product_price);
-					$(product_containers).append(product_edit);
-					$(product_containers).append(product_delete);
+						var product_hide = document.createElement("button");
+							$(product_hide).attr('class', 'product_hide btn btn-info');
+							$(product_hide).attr('id', 'product_hide_'+product.id);
+							$(product_hide).attr('onclick', 'hideProduct('+product.id+')');
+							$(product_hide).html('Hide');
 
-					$(container).append(product_containers);
+						$(product_containers).append(product_title);
+						$(product_containers).append(product_unit);
+						$(product_containers).append(product_description);
+						$(product_containers).append(product_price);
+						$(product_containers).append(product_edit);
+						$(product_containers).append(product_delete);
+						$(product_containers).append(product_hide);
+
+						$(container).append(product_containers);
+					}
+					else
+					{
+						var product_containers = document.createElement("div");
+							$(product_containers).attr('class', 'product_container');
+							$(product_containers).attr('id', 'product_container_'+product.id);
+
+						var product_title = document.createElement('div');
+							$(product_title).attr('class', 'product_title');
+							$(product_title).attr('id', 'product_title_'+product.id);
+							$(product_title).html(product.product);
+
+						var product_unit = document.createElement('div');
+							$(product_unit).attr('class', 'product_unit');
+							$(product_unit).attr('id', 'product_unit_'+product.id);
+							$(product_unit).html(product.unit);
+
+						var product_description = document.createElement('div');
+							$(product_description).attr('class', 'product_description');
+							$(product_description).attr('id', 'product_description_'+product.id);
+							$(product_description).html(product.description);
+
+						var product_price = document.createElement('div');
+							$(product_price).attr('class', 'product_price');
+							$(product_price).attr('id', 'product_price_'+product.id);
+							$(product_price).html('$'+product.price);
+
+						var product_amount = document.createElement('input');
+							$(product_amount).attr('class', 'product_amount_input');
+							$(product_amount).attr('id', 'product_amount_'+product.id);
+							$(product_amount).attr('type', 'number');
+							$(product_amount).attr('value', 0);
+							$(product_amount).attr('oninput', 'total('+product.id+')');
+
+						var product_total = document.createElement('input');
+							$(product_total).attr('class', 'product_total');
+							$(product_total).attr('disabled', 'disabled');
+							$(product_total).attr('id', 'product_total_'+product.id);
+							$(product_total).attr('value', '$0');
+
+						var product_edit = document.createElement("button");
+							$(product_edit).attr('class', 'product_edit btn btn-warning');
+							$(product_edit).attr('id', 'product_edit_'+product.id);
+							$(product_edit).attr('onclick', 'editProduct('+product.id+')');
+							$(product_edit).html('Edit');
+
+						var product_delete = document.createElement("button");
+							$(product_delete).attr('class', 'product_delete btn btn-danger');
+							$(product_delete).attr('id', 'product_delete_'+product.id);
+							$(product_delete).attr('onclick', 'deleteProduct('+product.id+')');
+							$(product_delete).html('Delete');
+
+						var product_show = document.createElement("button");
+							$(product_show).attr('class', 'product_hide btn btn-info');
+							$(product_show).attr('id', 'product_hide_'+product.id);
+							$(product_show).attr('onclick', 'showProduct('+product.id+')');
+							$(product_show).html('Show');
+
+						$(product_containers).append(product_title);
+						$(product_containers).append(product_unit);
+						$(product_containers).append(product_description);
+						$(product_containers).append(product_price);
+						$(product_containers).append(product_edit);
+						$(product_containers).append(product_delete);
+						$(product_containers).append(product_show);
+
+						$(container).append(product_containers);
+					}
 				});
 			}
 		}
@@ -419,6 +499,68 @@
 				$(input_form).submit();
 			}
 		}
+		function hideProduct(id)
+		{
+			if(confirm("Hiding this will cause it to not appear on the price list, do you still wish to continue?"))
+			{
+				$.ajax({
+			        url: "{{ URL('/api/products/hide') }}"+'/'+id,
+			        type: "POST",
+			        cache: false,
+			        data: { _token: '{{ csrf_token() }}'},
+			        success: function(data)
+			        {
+			        	$('.error_message').remove();
+			        	var error = document.createElement("p");
+			        		$(error).attr('class', 'error_message');
+			        		$(error).html("Product Successfully Hidden");
+
+			        	$('#product_hide_'+id).attr('onclick', 'showProduct('+id+')');
+			        	$('#product_hide_'+id).html('Show');
+			        	$('#product_form').prepend(error);
+			        },
+			        error: function(error_mess)
+			        {
+			        	var error = document.createElement("p");
+			        		$(error).attr('class', 'error_message');
+			        		$(error).html("Product Not Hidden, Error Occurred");
+
+			        	$('#product_form').prepend(error);
+			        }
+			    });
+			}
+		}
+		function showProduct(id)
+		{
+			if(confirm("Showing this will cause it to appear on the price list, do you still wish to continue?"))
+			{
+				$.ajax({
+			        url: "{{ URL('/api/products/show') }}"+'/'+id,
+			        type: "POST",
+			        cache: false,
+			        data: { _token: '{{ csrf_token() }}'},
+			        success: function(data)
+			        {
+			        	$('.error_message').remove();
+			        	var error = document.createElement("p");
+			        		$(error).attr('class', 'error_message');
+			        		$(error).html("Product Successfully Shown");
+
+			        	$('#product_hide_'+id).attr('onclick', 'hideProduct('+id+')');
+			        	$('#product_hide_'+id).html('Hide');
+			        	$('#product_form').prepend(error);
+			        },
+			        error: function(data)
+			        {
+			        	var error = document.createElement("p");
+			        		$(error).attr('class', 'error_message');
+			        		$(error).html("Product Not Shown, Error Occurred");
+
+			        	$('#product_form').prepend(error);
+			        }
+			    });
+			}
+		}
 		function makeEmailDiv()
 		{
 			$('#inquiry_email_btn').hide();
@@ -518,6 +660,16 @@
 			$(emailForm).append(itemInput);
 
 			emailForm.submit();
+		}
+		function countShownItems(data)
+		{
+			var count = 0;
+			data.forEach(function(item, key) {
+				if(item.hidden == 0)
+					count++;
+			});
+
+			return count;
 		}
 	</script>
 @endsection

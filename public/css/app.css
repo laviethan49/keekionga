@@ -83,6 +83,7 @@
  	display: block;
  	text-align: center;
  	margin-bottom: -1%;
+ 	font-size: 36px;
 }
 
 #post_form {
@@ -117,11 +118,6 @@
 	border: solid #a3c3f7 1px;
  	box-shadow: 10px 10px 10px 0px #051e47;
 	border-radius: 3px;
-}
-
-#posts_container {
-	width: 100;
-	display: block;
 }
 
 .input_text_box {
@@ -188,16 +184,30 @@
 
 .edit_post {
 	position: absolute;
-	margin-top: 10px;
-	margin-left: 150px;
-	top: 0%;
+	display: block;
+	left: 13%;
+	top: 3%;
 }
 
 .delete_post {
 	position: absolute;
-	margin-top: 10px;
-	margin-left: 25px;
-	top: 0%;
+	display: block;
+	left: 1%;
+	top: 3%;
+}
+
+.hide_post {
+	position: absolute;
+	display: block;
+	right: 1%;
+	top: 3%;
+}
+
+.special_post {
+	position: absolute;
+	display: block;
+	right: 13%;
+	top: 3%;
 }
 
 .post_input_title {
@@ -346,6 +356,15 @@ body {
 	padding-top: 2%;
 }
 
+.product_fixture {
+	float: left;
+	padding: auto;
+	width: 33%;
+	text-align: center;
+	font-size: 18px;
+	padding-top: 2%;
+}
+
 .product_total_ {
 	float: left;
 	padding: auto;
@@ -375,6 +394,12 @@ body {
 }
 
 .product_delete {
+	position: relative;
+	margin-left: 4%;
+	margin-top: 2%;
+}
+
+.product_hide {
 	position: relative;
 	margin-left: 4%;
 	margin-top: 2%;
@@ -418,20 +443,47 @@ body {
 	width: 25%;
 	margin-left: 6%;
 }
+
 #user_name {
 	float: left;
 	width: 25%;
 	margin-left: 6%;
 }
+
 #user_phone {
 	float: left;
 	width: 25%;
 	margin-left: 6%;
 }
+
 #user_comment {
 	position: relative;
 	display: block;
 	left: 20%;
 	width: 60%;
 	margin-bottom: 2%;
+}
+
+#month_selector {
+	position: relative;
+	display: block;
+	left: 10%;
+	width: 80%;
+	border: solid #a3c3f7 1px;
+	border-radius: 3px;
+	background-color: white;
+}
+
+#selector {
+	position: relative;
+	left: 3%;
+	text-align: center;
+	width: 15%;
+	margin-bottom: -3%;
+	margin-top: 1%;
+	height: 75px;
+	border: solid #a3c3f7 1px;
+ 	box-shadow: 10px 10px 10px 0px #051e47;
+	border-radius: 3px;
+	background-color: white;
 }
